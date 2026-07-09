@@ -16,8 +16,29 @@ jobs:
       - name: Build api image
         run: docker build -t ticketing-api:ci ./api
 
+      - name: Scan api image
+        uses: aquasecurity/trivy-action@0.24.0
+        with:
+          image-ref: ticketing-api:ci
+          severity: CRITICAL,HIGH
+          exit-code: '1'
+
       - name: Build worker image
         run: docker build -t ticketing-worker:ci ./worker
 
+      - name: Scan worker image
+        uses: aquasecurity/trivy-action@0.24.0
+        with:
+          image-ref: ticketing-worker:ci
+          severity: CRITICAL,HIGH
+          exit-code: '1'
+
       - name: Build frontend image
         run: docker build -t ticketing-frontend:ci ./frontend
+
+      - name: Scan frontend image
+        uses: aquasecurity/trivy-action@0.24.0
+        with:
+          image-ref: ticketing-frontend:ci
+          severity: CRITICAL,HIGH
+          exit-code: '1'
