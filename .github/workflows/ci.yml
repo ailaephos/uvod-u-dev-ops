@@ -16,6 +16,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
+      - name: Create security reports directory
+        run: mkdir -p security
+
       - name: Build api image
         run: docker build -t ticketing-api:ci ./api
 
