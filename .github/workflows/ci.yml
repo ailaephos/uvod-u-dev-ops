@@ -1,0 +1,23 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build api image
+        run: docker build -t ticketing-api:ci ./api
+
+      - name: Build worker image
+        run: docker build -t ticketing-worker:ci ./worker
+
+      - name: Build frontend image
+        run: docker build -t ticketing-frontend:ci ./frontend
