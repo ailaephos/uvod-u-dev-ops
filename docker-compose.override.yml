@@ -1,0 +1,21 @@
+services:
+  api:
+    build:
+      target: dev
+    command: npx nodemon --legacy-watch src/server.js
+    volumes:
+      - ./api/src:/app/src
+
+  worker:
+    build:
+      target: dev
+    command: npx nodemon --legacy-watch src/worker.js
+    volumes:
+      - ./worker/src:/app/src
+
+  frontend:
+    build:
+      target: dev
+    command: npx nodemon --legacy-watch src/server.js
+    volumes:
+      - ./frontend/src:/app/src
