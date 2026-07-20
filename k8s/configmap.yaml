@@ -1,0 +1,14 @@
+# k8s/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  POSTGRES_DB: ticketing
+  POSTGRES_USER: ticketing_user
+  POSTGRES_HOST: postgres
+  POSTGRES_PORT: "5432"
+  REDIS_HOST: redis
+  REDIS_PORT: "6379"
+  API_PORT: "8080"
+  QUEUE_NAME: ticket_orders
