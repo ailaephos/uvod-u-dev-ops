@@ -20,6 +20,16 @@ jobs:
       - name: Create security reports directory
         run: mkdir -p security
 
+      - name: Scan K8s manifests
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: config
+          scan-ref: k8s/
+          severity: HIGH,CRITICAL
+          exit-code: '0'
+          format: table
+          output: security/trivy-k8s-manifests-report.txt
+
       - name: Build api image
         run: docker build -t ticketing-api:ci ./api
 
