@@ -18,7 +18,7 @@ Report Summary
 ├──────────────────────────────┼────────────┼───────────────────┤
 │ networkpolicy.yaml           │ kubernetes │         0         │
 ├──────────────────────────────┼────────────┼───────────────────┤
-│ postgres/deployment.yaml     │ kubernetes │         3         │
+│ postgres/deployment.yaml     │ kubernetes │         1         │
 ├──────────────────────────────┼────────────┼───────────────────┤
 │ postgres/init-configmap.yaml │ kubernetes │         0         │
 ├──────────────────────────────┼────────────┼───────────────────┤
@@ -32,7 +32,7 @@ Report Summary
 ├──────────────────────────────┼────────────┼───────────────────┤
 │ rbac/serviceaccount.yaml     │ kubernetes │         0         │
 ├──────────────────────────────┼────────────┼───────────────────┤
-│ redis/deployment.yaml        │ kubernetes │         3         │
+│ redis/deployment.yaml        │ kubernetes │         1         │
 ├──────────────────────────────┼────────────┼───────────────────┤
 │ redis/service.yaml           │ kubernetes │         0         │
 ├──────────────────────────────┼────────────┼───────────────────┤
@@ -47,8 +47,8 @@ Legend:
 
 postgres/deployment.yaml (kubernetes)
 =====================================
-Tests: 34 (SUCCESSES: 31, FAILURES: 3)
-Failures: 3 (HIGH: 3, CRITICAL: 0)
+Tests: 33 (SUCCESSES: 32, FAILURES: 1)
+Failures: 1 (HIGH: 1, CRITICAL: 0)
 
 KSV-0014 (HIGH): Container 'postgres' of Deployment 'postgres' should set 'securityContext.readOnlyRootFilesystem' to true
 ════════════════════════════════════════
@@ -56,59 +56,17 @@ An immutable root file system prevents applications from writing to their local 
 
 See https://avd.aquasec.com/misconfig/ksv-0014
 ────────────────────────────────────────
- postgres/deployment.yaml:18-31
+ postgres/deployment.yaml:22-40
 ────────────────────────────────────────
-  18 ┌         - name: postgres
-  19 │           image: postgres:16
-  20 │           ports:
-  21 │             - containerPort: 5432
-  22 │           envFrom:
-  23 │             - configMapRef:
-  24 │                 name: app-config
-  25 │             - secretRef:
-  26 └                 name: postgres-secret
-  ..   
-────────────────────────────────────────
-
-
-KSV-0118 (HIGH): container postgres in default namespace is using the default security context
-════════════════════════════════════════
-Security context controls the allocation of security parameters for the pod/container/volume, ensuring the appropriate level of protection. Relying on default security context may expose vulnerabilities to potential attacks that rely on privileged access.
-
-See https://avd.aquasec.com/misconfig/ksv-0118
-────────────────────────────────────────
- postgres/deployment.yaml:18-31
-────────────────────────────────────────
-  18 ┌         - name: postgres
-  19 │           image: postgres:16
-  20 │           ports:
-  21 │             - containerPort: 5432
-  22 │           envFrom:
-  23 │             - configMapRef:
-  24 │                 name: app-config
-  25 │             - secretRef:
-  26 └                 name: postgres-secret
-  ..   
-────────────────────────────────────────
-
-
-KSV-0118 (HIGH): deployment postgres in default namespace is using the default security context, which allows root privileges
-════════════════════════════════════════
-Security context controls the allocation of security parameters for the pod/container/volume, ensuring the appropriate level of protection. Relying on default security context may expose vulnerabilities to potential attacks that rely on privileged access.
-
-See https://avd.aquasec.com/misconfig/ksv-0118
-────────────────────────────────────────
- postgres/deployment.yaml:16-38
-────────────────────────────────────────
-  16 ┌     spec:
-  17 │       containers:
-  18 │         - name: postgres
-  19 │           image: postgres:16
-  20 │           ports:
-  21 │             - containerPort: 5432
-  22 │           envFrom:
-  23 │             - configMapRef:
-  24 └                 name: app-config
+  22 ┌         - name: postgres
+  23 │           image: postgres:16
+  24 │           securityContext:
+  25 │             allowPrivilegeEscalation: false
+  26 │             capabilities:
+  27 │               drop:
+  28 │                 - ALL
+  29 │           ports:
+  30 └             - containerPort: 5432
   ..   
 ────────────────────────────────────────
 
@@ -116,8 +74,8 @@ See https://avd.aquasec.com/misconfig/ksv-0118
 
 redis/deployment.yaml (kubernetes)
 ==================================
-Tests: 34 (SUCCESSES: 31, FAILURES: 3)
-Failures: 3 (HIGH: 3, CRITICAL: 0)
+Tests: 33 (SUCCESSES: 32, FAILURES: 1)
+Failures: 1 (HIGH: 1, CRITICAL: 0)
 
 KSV-0014 (HIGH): Container 'redis' of Deployment 'redis' should set 'securityContext.readOnlyRootFilesystem' to true
 ════════════════════════════════════════
@@ -125,44 +83,17 @@ An immutable root file system prevents applications from writing to their local 
 
 See https://avd.aquasec.com/misconfig/ksv-0014
 ────────────────────────────────────────
- redis/deployment.yaml:16-19
+ redis/deployment.yaml:20-28
 ────────────────────────────────────────
-  16 ┌         - name: redis
-  17 │           image: redis:7
-  18 │           ports:
-  19 └             - containerPort: 6379
-────────────────────────────────────────
-
-
-KSV-0118 (HIGH): container redis in default namespace is using the default security context
-════════════════════════════════════════
-Security context controls the allocation of security parameters for the pod/container/volume, ensuring the appropriate level of protection. Relying on default security context may expose vulnerabilities to potential attacks that rely on privileged access.
-
-See https://avd.aquasec.com/misconfig/ksv-0118
-────────────────────────────────────────
- redis/deployment.yaml:16-19
-────────────────────────────────────────
-  16 ┌         - name: redis
-  17 │           image: redis:7
-  18 │           ports:
-  19 └             - containerPort: 6379
-────────────────────────────────────────
-
-
-KSV-0118 (HIGH): deployment redis in default namespace is using the default security context, which allows root privileges
-════════════════════════════════════════
-Security context controls the allocation of security parameters for the pod/container/volume, ensuring the appropriate level of protection. Relying on default security context may expose vulnerabilities to potential attacks that rely on privileged access.
-
-See https://avd.aquasec.com/misconfig/ksv-0118
-────────────────────────────────────────
- redis/deployment.yaml:14-19
-────────────────────────────────────────
-  14 ┌     spec:
-  15 │       containers:
-  16 │         - name: redis
-  17 │           image: redis:7
-  18 │           ports:
-  19 └             - containerPort: 6379
+  20 ┌         - name: redis
+  21 │           image: redis:7
+  22 │           securityContext:
+  23 │             allowPrivilegeEscalation: false
+  24 │             capabilities:
+  25 │               drop:
+  26 │                 - ALL
+  27 │           ports:
+  28 └             - containerPort: 6379
 ────────────────────────────────────────
 
 
