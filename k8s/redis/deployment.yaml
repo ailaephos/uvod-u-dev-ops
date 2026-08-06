@@ -12,8 +12,17 @@ spec:
       labels:
         app: redis
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999
       containers:
+        # trivy:ignore:KSV-0014 -- treba pisati na disk
         - name: redis
           image: redis:7
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 6379
