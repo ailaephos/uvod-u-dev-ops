@@ -18,7 +18,7 @@ Report Summary
 ├──────────────────────────────┼────────────┼───────────────────┤
 │ networkpolicy.yaml           │ kubernetes │         0         │
 ├──────────────────────────────┼────────────┼───────────────────┤
-│ postgres/deployment.yaml     │ kubernetes │         1         │
+│ postgres/deployment.yaml     │ kubernetes │         0         │
 ├──────────────────────────────┼────────────┼───────────────────┤
 │ postgres/init-configmap.yaml │ kubernetes │         0         │
 ├──────────────────────────────┼────────────┼───────────────────┤
@@ -32,7 +32,7 @@ Report Summary
 ├──────────────────────────────┼────────────┼───────────────────┤
 │ rbac/serviceaccount.yaml     │ kubernetes │         0         │
 ├──────────────────────────────┼────────────┼───────────────────┤
-│ redis/deployment.yaml        │ kubernetes │         1         │
+│ redis/deployment.yaml        │ kubernetes │         0         │
 ├──────────────────────────────┼────────────┼───────────────────┤
 │ redis/service.yaml           │ kubernetes │         0         │
 ├──────────────────────────────┼────────────┼───────────────────┤
@@ -43,57 +43,4 @@ Report Summary
 Legend:
 - '-': Not scanned
 - '0': Clean (no security findings detected)
-
-
-postgres/deployment.yaml (kubernetes)
-=====================================
-Tests: 33 (SUCCESSES: 32, FAILURES: 1)
-Failures: 1 (HIGH: 1, CRITICAL: 0)
-
-KSV-0014 (HIGH): Container 'postgres' of Deployment 'postgres' should set 'securityContext.readOnlyRootFilesystem' to true
-════════════════════════════════════════
-An immutable root file system prevents applications from writing to their local disk. This can limit intrusions, as attackers will not be able to tamper with the file system or write foreign executables to disk.
-
-See https://avd.aquasec.com/misconfig/ksv-0014
-────────────────────────────────────────
- postgres/deployment.yaml:21-39
-────────────────────────────────────────
-  21 ┌         - name: postgres
-  22 │           image: postgres:16
-  23 │           securityContext:
-  24 │             allowPrivilegeEscalation: false
-  25 │             capabilities:
-  26 │               drop:
-  27 │                 - ALL
-  28 │           ports:
-  29 └             - containerPort: 5432
-  ..   
-────────────────────────────────────────
-
-
-
-redis/deployment.yaml (kubernetes)
-==================================
-Tests: 33 (SUCCESSES: 32, FAILURES: 1)
-Failures: 1 (HIGH: 1, CRITICAL: 0)
-
-KSV-0014 (HIGH): Container 'redis' of Deployment 'redis' should set 'securityContext.readOnlyRootFilesystem' to true
-════════════════════════════════════════
-An immutable root file system prevents applications from writing to their local disk. This can limit intrusions, as attackers will not be able to tamper with the file system or write foreign executables to disk.
-
-See https://avd.aquasec.com/misconfig/ksv-0014
-────────────────────────────────────────
- redis/deployment.yaml:19-27
-────────────────────────────────────────
-  19 ┌         - name: redis
-  20 │           image: redis:7
-  21 │           securityContext:
-  22 │             allowPrivilegeEscalation: false
-  23 │             capabilities:
-  24 │               drop:
-  25 │                 - ALL
-  26 │           ports:
-  27 └             - containerPort: 6379
-────────────────────────────────────────
-
 
