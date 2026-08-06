@@ -16,7 +16,6 @@ spec:
         runAsNonRoot: true
         runAsUser: 999
       containers:
-        # trivy:ignore:KSV-0014 -- treba pisati na disk
         - name: redis
           image: redis:7
           securityContext:
