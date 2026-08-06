@@ -56,17 +56,17 @@ An immutable root file system prevents applications from writing to their local 
 
 See https://avd.aquasec.com/misconfig/ksv-0014
 ────────────────────────────────────────
- postgres/deployment.yaml:22-40
+ postgres/deployment.yaml:21-39
 ────────────────────────────────────────
-  22 ┌         - name: postgres
-  23 │           image: postgres:16
-  24 │           securityContext:
-  25 │             allowPrivilegeEscalation: false
-  26 │             capabilities:
-  27 │               drop:
-  28 │                 - ALL
-  29 │           ports:
-  30 └             - containerPort: 5432
+  21 ┌         - name: postgres
+  22 │           image: postgres:16
+  23 │           securityContext:
+  24 │             allowPrivilegeEscalation: false
+  25 │             capabilities:
+  26 │               drop:
+  27 │                 - ALL
+  28 │           ports:
+  29 └             - containerPort: 5432
   ..   
 ────────────────────────────────────────
 
@@ -83,17 +83,17 @@ An immutable root file system prevents applications from writing to their local 
 
 See https://avd.aquasec.com/misconfig/ksv-0014
 ────────────────────────────────────────
- redis/deployment.yaml:20-28
+ redis/deployment.yaml:19-27
 ────────────────────────────────────────
-  20 ┌         - name: redis
-  21 │           image: redis:7
-  22 │           securityContext:
-  23 │             allowPrivilegeEscalation: false
-  24 │             capabilities:
-  25 │               drop:
-  26 │                 - ALL
-  27 │           ports:
-  28 └             - containerPort: 6379
+  19 ┌         - name: redis
+  20 │           image: redis:7
+  21 │           securityContext:
+  22 │             allowPrivilegeEscalation: false
+  23 │             capabilities:
+  24 │               drop:
+  25 │                 - ALL
+  26 │           ports:
+  27 └             - containerPort: 6379
 ────────────────────────────────────────
 
 
