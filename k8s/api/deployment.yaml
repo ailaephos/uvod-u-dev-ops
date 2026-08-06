@@ -13,9 +13,20 @@ spec:
         app: api
     spec:
       serviceAccountName: api-sa
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
       containers:
         - name: api
           image: ghcr.io/ailaephos/uvod-u-dev-ops/ticketing-api:latest
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
           ports:
             - containerPort: 8080
           envFrom:
