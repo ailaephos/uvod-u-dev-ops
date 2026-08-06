@@ -4,6 +4,7 @@ npm-debug.log*
 
 # Environment / secrets
 .env
+k8s/secret.yaml
 
 # OS
 .DS_Store
