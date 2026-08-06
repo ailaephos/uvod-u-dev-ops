@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Create security reports directory
-        run: mkdir -p security
+        run: mkdir -p docs/security
 
       - name: Scan K8s manifests
         uses: aquasecurity/trivy-action@master
@@ -28,7 +28,7 @@ jobs:
           severity: HIGH,CRITICAL
           exit-code: '0'
           format: table
-          output: security/trivy-k8s-manifests-report.txt
+          output: docs/security/trivy-k8s-manifests-report.txt
 
       - name: Build api image
         run: docker build -t ticketing-api:ci ./api
@@ -40,7 +40,7 @@ jobs:
           severity: CRITICAL,HIGH
           exit-code: '1'
           format: table
-          output: security/trivy-api-report.txt
+          output: docs/security/trivy-api-report.txt
 
       - name: Build worker image
         run: docker build -t ticketing-worker:ci ./worker
@@ -52,7 +52,7 @@ jobs:
           severity: CRITICAL,HIGH
           exit-code: '1'
           format: table
-          output: security/trivy-worker-report.txt
+          output: docs/security/trivy-worker-report.txt
 
       - name: Build frontend image
         run: docker build -t ticketing-frontend:ci ./frontend
@@ -64,7 +64,7 @@ jobs:
           severity: CRITICAL,HIGH
           exit-code: '1'
           format: table
-          output: security/trivy-frontend-report.txt
+          output: docs/security/trivy-frontend-report.txt
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
@@ -88,6 +88,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add security/ || true
+          git add docs/security/ || true
           git diff --cached --quiet || git commit -m "Update Trivy security reports [skip ci]"
           git push || true
