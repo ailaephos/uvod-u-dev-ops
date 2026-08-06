@@ -29,6 +29,7 @@ jobs:
           exit-code: '0'
           format: table
           output: docs/security/trivy-k8s-manifests-report.txt
+          trivyignores: .trivyignore.yaml
 
       - name: Build api image
         run: docker build -t ticketing-api:ci ./api

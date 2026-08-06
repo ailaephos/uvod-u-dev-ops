@@ -1,5 +1,6 @@
-- id: KSV-0014
-  paths:
-    - "k8s/postgres/deployment.yaml"
-    - "k8s/redis/deployment.yaml"
-  statement: "Postgres i Redis trebaju pisati na disk."
+misconfigurations:
+  - id: KSV-0014
+    paths:
+      - "postgres/deployment.yaml"
+      - "redis/deployment.yaml"
+    statement: "Postgres i Redis trebaju pisati na disk."
