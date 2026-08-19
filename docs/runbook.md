@@ -263,3 +263,75 @@ ili direktno kroz browser
 ```
 
 ---
+
+## Problem 9: Loš image tag pri deployu + demonstracija rolling update i rollback
+
+**Simptom:** Nakon `kubectl set image` s nepstojećim tagom, novi pod se ne diže.
+
+**Baseline prije promjene:**
+```bash
+kubectl get pods -l app=api
+```
+```
+NAME                   READY   STATUS    RESTARTS   AGE
+api-7d5ccbcbbf-2nt65   1/1     Running   0          26s
+api-7d5ccbcbbf-zhbzf   1/1     Running   0          13s
+```
+
+**Pokvareni deploy:**
+```bash
+kubectl set image deployment/api api=ghcr.io/ailaephos/uvod-u-dev-ops/ticketing-api:krivi
+kubectl get pods -l app=api
+```
+```
+NAME                   READY   STATUS         RESTARTS   AGE
+api-65ddc7958c-sp4r9   1/1     Running        0          2m18s
+api-65ddc7958c-xswbk   1/1     Running        0          2m30s
+api-bd6cb9cbc-dcmrx    0/1     ErrImagePull   0          25s
+```
+Stara dva poda ostaju up RollingUpdate ne gasi stare replike dok nova nije potvrđeno `Ready` (readinessProbe).
+
+**Dijagnoza:**
+```bash
+kubectl describe pod api-bd6cb9cbc-dcmrx
+```
+Events sekcija:
+```
+Warning  Failed  kubelet  Failed to pull image "...ticketing-api:krivi": rpc error: code = NotFound
+desc = failed to resolve reference "...ticketing-api:krivi": ...ticketing-api:krivi: not found
+```
+
+**Uzrok:** Referenciran tag koji ne postoji na GHCR registryju.
+
+**Popravak, rollback na prijašnju:**
+```bash
+kubectl rollout undo deployment/api
+kubectl rollout status deployment/api
+```
+```
+deployment "api" successfully rolled out
+```
+
+**Provjera:**
+```bash
+kubectl get pods -l app=api
+```
+```
+NAME                   READY   STATUS    RESTARTS   AGE
+api-65ddc7958c-sp4r9   1/1     Running   0          3m17s
+api-65ddc7958c-xswbk   1/1     Running   0          3m29s
+```
+Isti podovi,nikad nisu bili gašeni tijekom cijelog incidenta, nula downtimea.
+```bash
+curl http://localhost/api/healthz
+# {"status":"ok","service":"api"}
+```
+
+Sinkronizacija manifesta s klasterom nakon rollbacka (izbjegava drift upozorenje kod idućeg `kubectl apply`):
+```bash
+kubectl apply -f k8s/api/deployment.yaml
+```
+
+**Dodatna napomena, pravi (uspješan) rolling update:** Prije nego je simuliran ovaj incident, `kubectl rollout restart deployment/api` je demonstrirao standardni rolling update: novi Pod je čekao readinessProbe prije nego je stari ugašen (`1 od 2 nova replika ažurirana` → `1 stari replika čeka gašenje` → `successfully rolled out`), bez ijednog trenutka nedostupnosti servisa.
+
+---
