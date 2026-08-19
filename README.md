@@ -11,33 +11,41 @@ Prikazuje cijeli tok: lokalni razvoj kroz Docker Compose i produkcijski deployme
 - `postgres` - trajna pohrana narudzbi
 - `redis` - queue/cache sloj
 
-1.dio Lokalni Razvoj - Docker Compose
+## 1.dio Lokalni Razvoj - Docker Compose
 
-Preduvjet: Docker Desktop, Git
+- Preduvjet: Docker Desktop, Git
 
 Koraci: 
 1. Kloniraj repo i uđi u folder projekta
 2. Kopiraj .env.example u .env
 
+```bash
 cp .env.example .env
+```
 
 Vrijednosti mogu ostati iste za lokalni razvoj.
 
-Pokretanje: Dev mod + hot-reload
+### Pokretanje: Dev mod + hot-reload
 
+```bash
 docker compose up --build
+```
 
 Učitava docker-compose.override.yml
-
+```bash
 Windows: hot-reload koristi --legacy-watch ( više u docs/runbook.md)
+```
+### Gašenje
 
-Gašenje
-
+```bash
 docker compose down
+```
 
-Gašenje s pražnjenjem baze 
+### Gašenje s pražnjenjem baze 
 
+```bash
 docker compose down -v
+```
 
 ### Brza validacija funkcionalnosti
 
@@ -64,27 +72,32 @@ docker compose down -v
    - Otvori `http://localhost:3000`
 
 
-2. dio - Deploy na produkciju
+## 2. dio - Deploy na produkciju
 
-Preduvjeti: Docker Desktop s uključenim Kubernetesom, kubectl koji dolazi uz Docker Desktop, Ingress Controller
+- Preduvjeti: Docker Desktop s uključenim Kubernetesom, kubectl koji dolazi uz Docker Desktop, Ingress Controller
 
+```bash
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.11.3/deploy/static/provider/cloud/deploy.yaml
-
-
+```
 Pričekaj da ingress-nginx-controller bude Running:
 
+```bash
 kubectl get pods -n ingress-nginx
+```
 
 Koraci:
 
 1. Example u stvarni Secret file
 
- cp k8s/secret.example.yaml k8s/secret.yaml
+```bash
+cp k8s/secret.example.yaml k8s/secret.yaml
+```
 
  (stvarni secret u .gitignore)
 
 2. Primjeni manifeste
 
+```bash
 kubectl apply -f k8s/configmap.yaml
 kubectl apply -f k8s/secret.yaml
 kubectl apply -f k8s/postgres/init-configmap.yaml
@@ -103,15 +116,19 @@ kubectl apply -f k8s/frontend/deployment.yaml
 kubectl apply -f k8s/frontend/service.yaml
 kubectl apply -f k8s/networkpolicy.yaml
 kubectl apply -f k8s/ingress.yaml
+```
 
 3. Check
 
+```bash
 kubectl get pods
 kubectl get svc
 kubectl get ingress
+```
 
-Validacija:
+### Validacija:
 
+```bash
 curl http://localhost/api/healthz
 curl http://localhost/api/readyz
 curl http://localhost/api/events
@@ -121,14 +138,17 @@ curl -X POST http://localhost/api/tickets/purchase \
 curl http://localhost/api/tickets/orders
  UI:
    - Otvori `http://localhost`
+```
 
-Gašenje:
+### Gašenje:
 
-kubectl delete -f k8s/ --recursive
-
+```bash
+kubectl delete -f k8s/ --recursive,
+```
 (Ukoliko nakon gašenja i ponovnog dizanja postgres ne runna check docs/runbook.md)
 
-Potpuni reset: Docker Desktop UI - Reset Kubernetes Cluster
+### Potpuni reset: 
+Docker Desktop UI - Reset Kubernetes Cluster
 
 ## Sigurnosni elementi
 
@@ -147,6 +167,6 @@ Potpuni reset: Docker Desktop UI - Reset Kubernetes Cluster
 (s quality gateom (exit-code: 1))
 - Trivy config sken K8s manifesta (informativan; dokumentirane iznimke u .trivyignore.yaml)
 
-Detalji skeniranja: `docs/security/` (Trivy izvještaji za sve tri slike i K8s manifeste)
+- Detalji skeniranja: `docs/security/` (Trivy izvještaji za sve tri slike i K8s manifeste)
 
-Dodatna dokumentacija: `docs/runbook.md` — dijagnostika i rješenja stvarnih problema na koje se naišlo tijekom razvoja
+- Dodatna dokumentacija: `docs/runbook.md` — dijagnostika i rješenja stvarnih problema na koje se naišlo tijekom razvoja
