@@ -13,6 +13,24 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: ticketing
+          POSTGRES_USER: ticketing_user
+          POSTGRES_PASSWORD: change_me_local
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U ticketing_user -d ticketing"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -33,6 +51,19 @@ jobs:
 
       - name: Build api image
         run: docker build -t ticketing-api:ci ./api
+
+      - name: Smoke test api image
+        run: |
+          docker run -d --name api-smoke --network host \
+            -e API_PORT=8080 \
+            -e REDIS_HOST=localhost -e REDIS_PORT=6379 \
+            -e POSTGRES_HOST=localhost -e POSTGRES_PORT=5432 \
+            -e POSTGRES_DB=ticketing -e POSTGRES_USER=ticketing_user -e POSTGRES_PASSWORD=change_me_local \
+            ticketing-api:ci
+          sleep 3
+          curl -f http://localhost:8080/healthz || (docker logs api-smoke && exit 1)
+          curl -f http://localhost:8080/readyz || (docker logs api-smoke && exit 1)
+          docker rm -f api-smoke
 
       - name: Scan api image
         uses: aquasecurity/trivy-action@master
