@@ -18,7 +18,7 @@ spec:
         runAsUser: 1000
       containers:
         - name: api
-          image: ghcr.io/ailaephos/uvod-u-dev-ops/ticketing-api:bf4efbc
+          image: ghcr.io/ailaephos/uvod-u-dev-ops/ticketing-api:f0a6985
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true

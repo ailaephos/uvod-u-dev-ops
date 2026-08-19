@@ -17,7 +17,7 @@ spec:
         runAsUser: 1000
       containers:
         - name: frontend
-          image: ghcr.io/ailaephos/uvod-u-dev-ops/ticketing-frontend:bf4efbc
+          image: ghcr.io/ailaephos/uvod-u-dev-ops/ticketing-frontend:f0a6985
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
