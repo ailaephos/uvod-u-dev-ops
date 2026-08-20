@@ -143,7 +143,7 @@ curl http://localhost/api/tickets/orders
 ### Gašenje:
 
 ```bash
-kubectl delete -f k8s/ --recursive,
+kubectl delete -f k8s/ --recursive
 ```
 (Ukoliko nakon gašenja i ponovnog dizanja postgres ne runna check docs/runbook.md)
 
