@@ -17,7 +17,7 @@ spec:
         runAsUser: 1000
       containers:
         - name: worker
-          image: ghcr.io/ailaephos/uvod-u-dev-ops/ticketing-worker:f0a6985
+          image: ghcr.io/ailaephos/uvod-u-dev-ops/ticketing-worker:c202a4c
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
